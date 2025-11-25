@@ -1,5 +1,6 @@
 import { Navigation } from "@/components/Navigation";
 import { StartupCard } from "@/components/StartupCard";
+import { AdviceReportPanel } from "@/components/AdviceReportPanel";
 import { useLocation } from "react-router-dom";
 import { Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -95,6 +96,7 @@ const mockStartups = [
 const Results = () => {
   const location = useLocation();
   const searchCriteria = location.state || {};
+  const showAdviceReport = searchCriteria.showAdviceReport || false;
 
   return (
     <div className="min-h-screen bg-background">
@@ -146,16 +148,26 @@ const Results = () => {
           </div>
         )}
 
-        {/* Results Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {mockStartups.map((startup, index) => (
-            <div
-              key={startup.id}
-              style={{ animationDelay: `${index * 100}ms` }}
-            >
-              <StartupCard {...startup} />
+        {/* Results Layout - 2 Column: Startups Left, Advice Right */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left Column - Startup Cards */}
+          <div className="lg:col-span-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {mockStartups.map((startup, index) => (
+                <div
+                  key={startup.id}
+                  style={{ animationDelay: `${index * 100}ms` }}
+                >
+                  <StartupCard {...startup} />
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
+
+          {/* Right Column - Advice Report Panel */}
+          <div className="lg:col-span-1">
+            <AdviceReportPanel searchCriteria={searchCriteria} />
+          </div>
         </div>
       </div>
     </div>

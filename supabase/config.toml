@@ -1,0 +1,4 @@
+project_id = "vlntplbvoilxbnnqkblx"
+
+[functions.generate-advice-report]
+verify_jwt = false

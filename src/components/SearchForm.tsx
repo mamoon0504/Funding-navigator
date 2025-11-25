@@ -27,6 +27,20 @@ export const SearchForm = () => {
     });
   };
 
+  const handleAdviceReport = (e: React.MouseEvent) => {
+    e.preventDefault();
+    
+    if (!stage && !sector && !industry && !investment) {
+      toast.error("Please select at least one criteria");
+      return;
+    }
+
+    toast.success("Preparing advice report...");
+    navigate("/results", { 
+      state: { stage, sector, industry, investment, showAdviceReport: true } 
+    });
+  };
+
   return (
     <form onSubmit={handleSearch} className="w-full max-w-4xl mx-auto space-y-6 animate-fade-in">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -106,11 +120,15 @@ export const SearchForm = () => {
         </div>
       </div>
 
-      {/* Search Button */}
-      <div className="flex justify-center pt-4">
+      {/* Search Buttons */}
+      <div className="flex justify-center gap-4 pt-4 flex-wrap">
         <Button type="submit" variant="accent" size="lg" className="min-w-[200px]">
           <Search className="w-5 h-5 mr-2" />
           Find Matches
+        </Button>
+        <Button type="button" onClick={handleAdviceReport} variant="secondary" size="lg" className="min-w-[200px]">
+          <Search className="w-5 h-5 mr-2" />
+          Advies Rapport
         </Button>
       </div>
     </form>
