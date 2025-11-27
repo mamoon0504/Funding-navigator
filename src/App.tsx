@@ -11,6 +11,8 @@ import TRLPhase from "./pages/TRLPhase";
 import WhatAreSubsidies from "./pages/WhatAreSubsidies";
 import SubsidieFinder from "./pages/SubsidieFinder";
 import Contact from "./pages/Contact";
+import HowItWorks from "./pages/HowItWorks";
+import AdviceReport from "./pages/AdviceReport";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,6 +31,8 @@ const App = () => (
           <Route path="/mijn-trl-fase" element={<TRLPhase />} />
           <Route path="/wat-zijn-subsidies" element={<WhatAreSubsidies />} />
           <Route path="/subsidie-finder" element={<SubsidieFinder />} />
+          <Route path="/hoe-werkt-het" element={<HowItWorks />} />
+          <Route path="/advies-rapport" element={<AdviceReport />} />
           <Route path="/contact" element={<Contact />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

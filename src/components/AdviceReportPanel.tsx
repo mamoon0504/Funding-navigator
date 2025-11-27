@@ -18,25 +18,12 @@ interface AdviceReportPanelProps {
 export const AdviceReportPanel = ({ searchCriteria }: AdviceReportPanelProps) => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [report, setReport] = useState<string>("");
+  const [showPreview, setShowPreview] = useState(false);
   const [contactDialogOpen, setContactDialogOpen] = useState(false);
   const [hasSubmittedContact, setHasSubmittedContact] = useState(false);
 
-  const handleGenerateClick = () => {
-    if (!hasSubmittedContact) {
-      setContactDialogOpen(true);
-    } else {
-      generateReport();
-    }
-  };
-
-  const handleContactSubmit = (details: { name: string; email: string; phone: string }) => {
-    console.log("Contact details submitted:", details);
-    setHasSubmittedContact(true);
-    setContactDialogOpen(false);
-    generateReport();
-  };
-
-  const generateReport = async () => {
+  const handleGenerateClick = async () => {
+    // Generate preview first
     setIsGenerating(true);
     try {
       const { data, error } = await supabase.functions.invoke('generate-advice-report', {
@@ -46,14 +33,31 @@ export const AdviceReportPanel = ({ searchCriteria }: AdviceReportPanelProps) =>
       if (error) throw error;
 
       setReport(data.report);
-      toast.success("Advies rapport gegenereerd!");
+      setShowPreview(true);
+      toast.success("Preview gegenereerd!");
     } catch (error) {
-      console.error('Error generating report:', error);
+      console.error('Error generating preview:', error);
       toast.error("Er ging iets mis bij het genereren van het rapport");
     } finally {
       setIsGenerating(false);
     }
   };
+
+  const handleReadMore = () => {
+    if (!hasSubmittedContact) {
+      setContactDialogOpen(true);
+    }
+  };
+
+  const handleContactSubmit = (details: { name: string; email: string; phone: string }) => {
+    console.log("Contact details submitted:", details);
+    setHasSubmittedContact(true);
+    setContactDialogOpen(false);
+    toast.success("Volledig rapport is nu beschikbaar!");
+  };
+
+  // Get preview text (first 200 characters)
+  const previewText = report ? report.substring(0, 200) + "..." : "";
 
   return (
     <Card className="sticky top-4 h-fit animate-fade-in">
@@ -115,7 +119,22 @@ export const AdviceReportPanel = ({ searchCriteria }: AdviceReportPanelProps) =>
           )}
         </Button>
 
-        {report && (
+        {showPreview && !hasSubmittedContact && (
+          <div className="mt-4 p-4 bg-secondary/20 rounded-lg space-y-3">
+            <h4 className="font-semibold flex items-center gap-2 text-foreground">
+              <FileText className="w-4 h-4" />
+              Preview Adviesrapport
+            </h4>
+            <div className="prose prose-sm max-w-none text-foreground">
+              <div className="whitespace-pre-wrap text-sm">{previewText}</div>
+            </div>
+            <Button onClick={handleReadMore} variant="accent" className="w-full">
+              Lees meer - Ontvang volledig rapport
+            </Button>
+          </div>
+        )}
+
+        {hasSubmittedContact && report && (
           <div className="mt-4 p-4 bg-secondary/20 rounded-lg space-y-3">
             <h4 className="font-semibold flex items-center gap-2 text-foreground">
               <FileText className="w-4 h-4" />
@@ -132,8 +151,8 @@ export const AdviceReportPanel = ({ searchCriteria }: AdviceReportPanelProps) =>
         open={contactDialogOpen}
         onOpenChange={setContactDialogOpen}
         onSubmit={handleContactSubmit}
-        title="Contactgegevens vereist"
-        description="Vul je gegevens in om je advies rapport te genereren."
+        title="Ontvang volledig rapport"
+        description="Vul je gegevens in om het volledige adviesrapport te ontvangen."
       />
     </Card>
   );

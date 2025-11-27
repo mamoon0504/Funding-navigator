@@ -102,7 +102,13 @@ const Results = () => {
   const [showAll, setShowAll] = useState(false);
   const [contactDialogOpen, setContactDialogOpen] = useState(false);
 
-  const displayedStartups = showAll ? mockStartups : mockStartups.slice(0, 3);
+  // Check if we have any search criteria
+  const hasCriteria = Object.keys(searchCriteria).filter(key => key !== 'showAdviceReport').length > 0;
+  
+  // Show general funding options if no criteria
+  const displayedStartups = !hasCriteria 
+    ? mockStartups.slice(0, 3) 
+    : showAll ? mockStartups : mockStartups.slice(0, 3);
 
   const handleShowMore = () => {
     setContactDialogOpen(true);
@@ -122,21 +128,25 @@ const Results = () => {
         {/* Header */}
         <div className="mb-8 animate-fade-in">
           <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            Startup Matches
+            {hasCriteria ? "Startup Matches" : "Algemene Financieringsmogelijkheden"}
           </h1>
           <div className="flex flex-wrap gap-4 items-center justify-between">
             <p className="text-muted-foreground">
-              Found {mockStartups.length} startups matching your criteria
+              {hasCriteria 
+                ? `Found ${mockStartups.length} startups matching your criteria`
+                : "Vul je criteria in om gepersonaliseerde matches te zien"}
             </p>
-            <Button variant="outline" size="sm">
-              <Filter className="w-4 h-4 mr-2" />
-              Refine Search
+            <Button variant="outline" size="sm" asChild>
+              <a href="/">
+                <Filter className="w-4 h-4 mr-2" />
+                {hasCriteria ? "Refine Search" : "Vul Criteria In"}
+              </a>
             </Button>
           </div>
         </div>
 
         {/* Search Criteria Summary */}
-        {Object.keys(searchCriteria).length > 0 && (
+        {hasCriteria && Object.keys(searchCriteria).filter(key => key !== 'showAdviceReport').length > 0 && (
           <div className="mb-8 p-4 bg-secondary/50 rounded-lg animate-fade-in">
             <h3 className="text-sm font-semibold text-foreground mb-2">Your Search Criteria:</h3>
             <div className="flex flex-wrap gap-2">
